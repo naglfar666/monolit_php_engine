@@ -1,19 +1,16 @@
 <?php
 namespace handlers;
 
-use core\Router;
+use core\Core;
 
-class Routes extends Router{
+class Routes{
   public function __construct()
   {
-    $this
-      ->get('/api/v1/{product}')
-      ->post('/api/v1/{product}/register');
-  }
+    $testController = '\controllers\test';
 
-  public function getRoutePatterns() : array
-  {
-    return $this->routePatterns;
+    Core::$Router
+      ->get('/api/v1/{product}', $testController.'::test')
+      ->post('/api/v1/{product}/register', $testController.'::test2');
   }
 }
 ?>

@@ -3,29 +3,31 @@ namespace core;
 
 class Router {
 
-  public $routePatterns = [];
+  private $routePatterns = [];
 
-  public function route()
-  {
-    // code...
-  }
-
-  public function get($path)
+  public function get($path, $callback) : Router
   {
     $this->routePatterns[] = [
       'pattern' => $path,
-      'method' => 'GET'
+      'method' => 'GET',
+      'callback' => $callback,
     ];
     return $this;
   }
 
-  public function post($path)
+  public function post($path, $callback) : Router
   {
     $this->routePatterns[] = [
       'pattern' => $path,
-      'method' => 'POST'
+      'method' => 'POST',
+      'callback' => $callback,
     ];
     return $this;
+  }
+
+  public function getRoutePatterns() : array
+  {
+    return $this->routePatterns;
   }
 }
 ?>

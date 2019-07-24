@@ -24,12 +24,10 @@ class Core {
 
     $this->parseRequestBody();
     $this->parseRequestQuery();
+    $this->parseRequestHeaders();
 
     $routes = self::$Router->getRoutePatterns();
     $this->callControllerMethod($routes[0]['callback']);
-
-    print_r(self::$Request->getBody());
-    print_r(self::$Request->getQuery());
   }
 
   private function parseRequestBody() : void
@@ -78,9 +76,14 @@ class Core {
     self::$Request->setQuery($queryContainer);
   }
 
+  private function parseRequestHeaders() : void
+  {
+    self::$Request->setHeaders(getallheaders());
+  }
+
   private function callControllerMethod(string $controller) : void
   {
-    $Data = call_user_func($controller);
+    $Data = call_user_func($controller, self::$Request);
     var_dump($Data);
   }
 }

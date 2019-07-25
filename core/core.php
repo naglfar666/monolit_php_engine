@@ -3,6 +3,7 @@ namespace core;
 
 include 'core/router.php';
 include 'core/request.php';
+include 'core/response.php';
 
 include 'handlers/index.php';
 
@@ -16,10 +17,13 @@ class Core {
 
   private static $Request;
 
-  public function run()
+  private static $Response;
+
+  public function run() : void
   {
     self::$Router = new Router;
     self::$Request = new Request;
+    self::$Response = new Response;
     new Routes;
 
     Request::parseRequestBody(self::$Request);
@@ -33,14 +37,20 @@ class Core {
       self::$Request->setMethod($routeFound['method']);
 
       $this->callControllerMethod($routeFound['callback']);
+    } else {
+      self::$Response
+        ->setStatus(404)
+        ->setMeta(['type'=>'error','text'=>'Request URL is not valid'])
+        ->toJson()
+        ->execute();
     }
-    
+
   }
 
   private function callControllerMethod(string $controller) : void
   {
-    $Data = call_user_func($controller, self::$Request);
-    var_dump($Data);
+    call_user_func($controller, self::$Request, self::$Response);
+    self::$Response->execute();
   }
 }
 ?>

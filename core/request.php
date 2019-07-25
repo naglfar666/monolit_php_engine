@@ -14,13 +14,14 @@ Class Request {
   {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      $requestBody = [];
       $phpinput = file_get_contents("php://input");
   		if ($phpinput != ''){
   			$_POST['phpinput'] = $phpinput;
   		}
 
-  		if (isset(getallheaders()['CONTENT_TYPE'])) {
-  			if (mb_stristr(getallheaders()['CONTENT_TYPE'], 'application/json')) {
+  		if (isset(getallheaders()['Content-Type'])) {
+  			if (mb_stristr(getallheaders()['Content-Type'], 'application/json')) {
   				$requestBody = json_decode($_POST['phpinput'], true);
   			} else {
           $requestBody = $_POST;

@@ -5,7 +5,7 @@ class Router {
 
   private $routePatterns = [];
 
-  public function get($path, $callback) : Router
+  public function get(string $path, string $callback) : Router
   {
     $this->routePatterns[$path] = [
       'method' => 'GET',
@@ -30,12 +30,6 @@ class Router {
 
   public function findRoute() : array
   {
-    // $pattern = $this->preparePattern('/api/v1/{product}/');
-    // print_r($pattern.PHP_EOL);
-    // $Matching = preg_match('#^api/route/(?<product>\w+)/(?<action>\w+)$#','api/route/osago/get',$data);
-    // var_dump($Matching);
-    // print_r($data);
-    // exit;
     $Patterns = $this->getRoutePatterns();
     foreach ($Patterns as $pattern => $values) {
       if (strtoupper($_SERVER['REQUEST_METHOD']) == strtoupper($values['method'])) {
@@ -51,20 +45,6 @@ class Router {
           return array_merge($values,['params'=>$paramsResult]);
         }
       }
-
-
-      // var_dump($pattern);
-      // var_dump($url);
-      //
-      // $Matching = preg_match($pattern,$url,$params);
-      // var_dump($Matching);
-      // var_dump($params);
-      // print_r($pattern.PHP_EOL);
-      // print_r($_SERVER['REQUEST_URI'].PHP_EOL);
-      // $Matching = preg_match('#^/' . ltrim($pattern, '/') . '$#', $_SERVER['REQUEST_URI'], $params);
-      //
-      // var_dump($Matching);
-      // var_dump($params);
     }
 
     return [];

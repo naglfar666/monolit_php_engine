@@ -7,6 +7,59 @@ Class Request {
   private $headers;
   private $url;
   private $query;
+  private $params;
+  private $method;
+
+  public static function parseRequestBody(Request $Request) : void
+  {
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+      $phpinput = file_get_contents("php://input");
+  		if ($phpinput != ''){
+  			$_POST['phpinput'] = $phpinput;
+  		}
+
+  		if (isset(getallheaders()['CONTENT_TYPE'])) {
+  			if (mb_stristr(getallheaders()['CONTENT_TYPE'], 'application/json')) {
+  				$requestBody = json_decode($_POST['phpinput'], true);
+  			} else {
+          $requestBody = $_POST;
+        }
+  		}
+    } elseif($_SERVER['REQUEST_METHOD'] == 'GET') {
+      $requestBody = [];
+    }
+
+    $Request->setBody($requestBody);
+  }
+
+  public static function parseRequestQuery(Request $Request) : void
+  {
+
+    $queryContainer = [];
+
+    $url = $_SERVER['REQUEST_URI'];
+
+    if (mb_stristr($url, '?')) {
+      $startPos = mb_strpos($url, '?');
+      $urlQuery = mb_substr($url, $startPos + 1, strlen($url) - 1);
+
+      foreach (explode('&', $urlQuery) as $chunk) {
+        $param = explode("=", $chunk);
+
+        if ($param) {
+          $queryContainer[urldecode($param[0])] = urldecode($param[1]);
+        }
+      }
+    }
+
+    $Request->setQuery($queryContainer);
+  }
+
+  public static function parseRequestHeaders(Request $Request) : void
+  {
+    $Request->setHeaders(getallheaders());
+  }
 
   public function getBody() : array
   {
@@ -46,6 +99,26 @@ Class Request {
   public function setQuery(array $data) : void
   {
     $this->query = $data;
+  }
+
+  public function getParams() : array
+  {
+    return $this->params;
+  }
+
+  public function setParams(array $data) : void
+  {
+    $this->params = $data;
+  }
+
+  public function getMethod() : string
+  {
+    return $this->method;
+  }
+
+  public function setMethod(string $data) : void
+  {
+    $this->method = $data;
   }
 
 }
